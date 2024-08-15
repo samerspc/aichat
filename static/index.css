@@ -1,0 +1,92 @@
+#chat-form {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.text-holder {
+    width: 500px;
+    height: 50px;
+    background: #232323;
+    color: rgba(230, 230, 230, 1.0);
+    font-weight: 100;
+    font-size: 18px;
+    border-radius: 23px;
+    padding-top: 30px;
+    padding-left: 7px;
+    border: 2px solid #343434;
+
+}
+
+.text-holder:focus {
+    outline: none;
+}
+
+#submit {
+    width: 60px;
+    height: 60px;
+    background: #343434;
+    border: none;
+    cursor: pointer;
+    border-radius: 50px;
+    transition: scale 0.3s ease;
+}
+
+#submit:hover {
+    scale: 1.1;
+}
+
+label {
+    display: none;
+}
+
+.user-message p, .gpt-message p {
+    background: #343434;
+    border-radius: 10px;
+    padding: 14px 14px;
+}
+
+.user-icon, .gpt-icon {
+    margin-top: 14px;
+}
+
+.gpt-message, .user-message {
+    display: flex;
+    gap: 10px;
+    align-items: start;
+}
+
+.user-message {
+    justify-content: right;
+}
+
+.gpt-message {
+    justify-content: left;
+}
+
+
+#h1 {
+    text-align: center;
+    font-size: 32px;
+}
+
+.container {
+    width: 100%;
+    height: 850px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#chat-window {
+    width: 1000px;
+    height: 700px;
+    box-sizing: border-box;
+    padding-left: 15px;
+    padding-right: 15px;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}

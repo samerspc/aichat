@@ -1,0 +1,10 @@
+.text-typing {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+}
+
+.typed-cursor {color: rgba(46, 232, 187, 0.81);}

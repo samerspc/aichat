@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block imports %}
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11"></script>
+    <link rel="stylesheet" href="{% static 'main.css' %}">
+{% endblock %}
+    
+{% block content %}
+    <div id="typed-strings">
+        <span>Добро пожаловать в чат с YandexGPT!</span>
+        <span>Создайте чат и начните общение</span>
+    </div>
+    
+    <div class="text-typing">
+        <span id="typed"></span>
+    </div>
+
+    <script>
+        let typed = new Typed('#typed', {
+            stringsElement: '#typed-strings',
+            typeSpeed: 100,
+            startDelay: 500,
+            backSpeed: 50,
+            loop: true,
+            cursorChar: '|', 
+            preTypeDelay: 30,
+            preBackDelay: 300,
+            smartBackspace: true,
+            onBeforeChange: function (instance) {
+                instance.cursorChar = '|'; 
+            },
+            onAfterChange: function (instance) {
+                instance.cursorChar = '|'; 
+            }
+        });
+    </script>
+{% endblock %}

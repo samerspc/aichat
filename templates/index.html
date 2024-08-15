@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block imports %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="{% static 'index.css' %}">
+{% endblock %}
+
+{% block content %}
+    <p id="h1">{{ chat.name }}</p>
+    <div class="container">
+        <div id="chat-window">
+                {% for message in messages %}
+                    {% if message.sender == "user" %}
+                        <div class="user-message">
+                            <p>{{ message.text }}</p>
+                            <img src="{% static 'user.svg' %}" class="user-icon" alt="">
+                        </div>
+                    {% else %}
+                        <div class="gpt-message">
+                            <img src="{% static 'llm.svg' %}" class="gpt-icon" alt="">
+                            <p>{{ message.text }}</p>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+        </div>
+        <form id="chat-form" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" id="submit">
+                <svg width="20" height="19" viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M8.03957 2.2709L1.15158 15.9413C0.942631 16.2985 0.922783 16.7356 1.09849 17.1102C1.27419 17.4849 1.62295 17.7491 2.03117 17.8169C2.1668 17.8122 2.29999 17.7795 2.42237 17.7209L8.71037 15.1181C9.12785 14.9875 9.56177 14.9164 9.99917 14.9069C10.4366 14.9163 10.8705 14.9874 11.288 15.1181L17.576 17.7209C17.6984 17.7795 17.8316 17.8122 17.9672 17.8169C18.3748 17.7487 18.7229 17.4845 18.8983 17.1102C19.0737 16.736 19.0539 16.2994 18.8456 15.9425L11.9576 2.2709C11.6035 1.50854 10.8392 1.02086 9.99857 1.02086C9.15797 1.02086 8.39369 1.50854 8.03957 2.2709Z" stroke="#36D1AC" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </form>
+    </div>
+    
+    <script>
+    function getCookie(name) { 
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            let cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                let cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    let csrftoken = getCookie('csrftoken');
+
+    $('#chat-form').on('submit', function(e) {
+        e.preventDefault();
+
+        const messageText = $('#message-text').val();
+
+        if (messageText.trim() === '') {
+            alert('Введите сообщение');
+            return;
+        }
+        
+        $('#chat-window').append(
+            "<div class='user-message'>" +
+            "<p>" + messageText + "</p>" +
+            "<img src='{% static 'user.svg' %}' class='user-icon' alt=''>" +
+            "</div>"
+        );
+        
+        $('#message-text').val(''); 
+        $('#chat-window').scrollTop($('#chat-window')[0].scrollHeight);
+        
+        let typingIndicator = $(
+            "<div class='gpt-message'>" +
+            "<img src='{% static 'llm.svg' %}' class='gpt-icon' alt=''>" +
+            "<p id='typing-indicator'>Печатает<span id='dots'>...</span></p>" +
+            "</div>"
+        );
+        $('#chat-window').append(typingIndicator);
+        $('#chat-window').scrollTop($('#chat-window')[0].scrollHeight);
+        
+        let dotCount = 0;
+        let typingAnimation = setInterval(function() {
+            dotCount = (dotCount + 1) % 4;
+            $('#dots').text('.'.repeat(dotCount));
+        }, 500); 
+        
+        $.ajax({
+            url: "{% url 'send_message' chat.id %}",
+            method: 'POST',
+            data: {
+                'message': messageText,
+                'csrfmiddlewaretoken': csrftoken
+            },
+            success: function(data) {
+                clearInterval(typingAnimation); 
+                $('#typing-indicator').parent().remove(); 
+                
+                $('#chat-window').append(
+                    "<div class='gpt-message'>" +
+                    "<img src='{% static 'llm.svg' %}' class='gpt-icon' alt=''>" +
+                    "<p>" + data.response + "</p>" +
+                    "</div>"
+                );
+
+                $('#chat-window').scrollTop($('#chat-window')[0].scrollHeight);
+            }
+        });
+    });
+</script>
+{% endblock %}
